@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
@@ -23,7 +22,6 @@ func global_quote(c *gin.Context) {
 	//	https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=demo
 	client := &http.Client{}
 	url := strings.Join([]string{alpha_API, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", api_key}, "")
-	fmt.Println(url)
 
 	request, err := http.NewRequest("GET", url, nil)
 
