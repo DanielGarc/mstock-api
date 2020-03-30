@@ -22,7 +22,7 @@ func ping(c *gin.Context) {
 func globalQuote(c *gin.Context) {
 	//	https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=demo
 	client := &http.Client{}
-	url := strings.Join([]string{alphaAPI, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", api_key}, "")
+	url := strings.Join([]string{alphaAPI, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", apiKey}, "")
 
 	request, err := http.NewRequest("GET", url, nil)
 
