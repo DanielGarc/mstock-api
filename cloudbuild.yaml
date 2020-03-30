@@ -16,6 +16,6 @@ steps:
       - '--region'
       - 'us-central1'
       - '--platform'
-      - 'managed'
+      - '-managed'
     images:
     - 'gcr.io/$PROJECT_ID/mstock:$COMMIT_SHA'
