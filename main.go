@@ -1,27 +1,28 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
-var alpha_API string
+var alphaAPI string
 
-var api_key = os.Getenv("API_KEY")
+var apiKey = os.Getenv("API_KEY")
 
 // Test ping function to make sure the API is running as expected
 func ping(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "pong"})
 }
 
-func global_quote(c *gin.Context) {
+func globalQuote(c *gin.Context) {
 	//	https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=demo
 	client := &http.Client{}
-	url := strings.Join([]string{alpha_API, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", api_key}, "")
+	url := strings.Join([]string{alphaAPI, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", api_key}, "")
 
 	request, err := http.NewRequest("GET", url, nil)
 
@@ -43,14 +44,21 @@ func setupRouter() *gin.Engine {
 
 	router.GET("/ping", ping)
 
-	router.GET("/global_quote", global_quote)
+	router.GET("/global_quote", globalQuote)
 
 	return router
 }
 
 func main() {
-	alpha_API = "https://www.alphavantage.co/"
+	alphaAPI = "https://www.alphavantage.co/"
+
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "8080"
+	}
 
 	router := setupRouter()
-	router.Run() // listen and serve on 0.0.0.0:8080
+	router.Run(":" + port)
+
 }
