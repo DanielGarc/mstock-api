@@ -1,4 +1,4 @@
-module mstock-go
+module mstock-api/packages
 
 go 1.14
 

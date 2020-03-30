@@ -1,4 +1,4 @@
-package main
+package routes
 
 import (
 	"io/ioutil"
@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var alphaAPI string
+var alpha_API = "https://www.alphavantage.co/"
 
 var apiKey = os.Getenv("API_KEY")
 
@@ -39,7 +39,7 @@ func globalQuote(c *gin.Context) {
 	c.JSON(200, gin.H{"message": string(data[:])})
 }
 
-func setupRouter() *gin.Engine {
+func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
 	router.GET("/ping", ping)
@@ -47,18 +47,4 @@ func setupRouter() *gin.Engine {
 	router.GET("/global_quote", globalQuote)
 
 	return router
-}
-
-func main() {
-	alphaAPI = "https://www.alphavantage.co/"
-
-	port := os.Getenv("PORT")
-
-	if port == "" {
-		port = "8080"
-	}
-
-	router := setupRouter()
-	router.Run(":" + port)
-
 }
