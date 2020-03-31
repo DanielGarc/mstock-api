@@ -15,7 +15,7 @@ var apiKey = os.Getenv("API_KEY")
 
 // Test ping function to make sure the API is running as expected
 func ping(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "pong"})
+	c.JSON(200, gin.H{"message": "pong+"})
 }
 
 func globalQuote(c *gin.Context) {
@@ -38,6 +38,7 @@ func globalQuote(c *gin.Context) {
 	c.JSON(200, gin.H{"message": string(data[:])})
 }
 
+//"SetupRouter ..."
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
