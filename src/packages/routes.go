@@ -1,28 +1,32 @@
 package routes
 
 import (
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
-var alpha_API = "https://www.alphavantage.co/"
+var alphaAPI = "https://www.alphavantage.co/"
 
 var apiKey = os.Getenv("API_KEY")
 
-// Test ping function to make sure the API is running as expected
-func ping(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "pong"})
+func SetupRouter() *gin.Engine {
+	router := gin.Default()
+
+	router.GET("/ping", ping)
+
+	router.GET("/global_quote", globalQuote)
+
+	router.GET("/symbol_search", symbolSearch)
+
+	return router
 }
 
-func globalQuote(c *gin.Context) {
-	//	https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=demo
+func apiRequest(url string) string {
 	client := &http.Client{}
-	url := strings.Join([]string{alphaAPI, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", apiKey}, "")
 
 	request, err := http.NewRequest("GET", url, nil)
 
@@ -36,15 +40,28 @@ func globalQuote(c *gin.Context) {
 		log.Fatal(err)
 	}
 
-	c.JSON(200, gin.H{"message": string(data[:])})
+	return string(data[:])
 }
 
-func SetupRouter() *gin.Engine {
-	router := gin.Default()
+// Test ping function to make sure the API is running as expected
+func ping(c *gin.Context) {
+	c.JSON(200, gin.H{"message": "pong"})
+}
 
-	router.GET("/ping", ping)
+func globalQuote(c *gin.Context) {
+	//	https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=demo
+	url := strings.Join([]string{alphaAPI, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", apiKey}, "")
 
-	router.GET("/global_quote", globalQuote)
+	result := apiRequest(url)
 
-	return router
+	c.JSON(200, gin.H{"message": result})
+}
+
+func symbolSearch(c *gin.Context) {
+	// https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=BA&apikey=demo
+	url := strings.Join([]string{alphaAPI, "query?function=SYMBOL_SEARCH&keywords=", c.Query("keywords"), "&apikey=", apiKey}, "")
+
+	result := apiRequest(url)
+
+	c.JSON(200, gin.H{"message": result})
 }
