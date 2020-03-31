@@ -13,6 +13,7 @@ var alphaAPI = "https://www.alphavantage.co/"
 
 var apiKey = os.Getenv("API_KEY")
 
+// SetupRouter list all the api endpoints
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
@@ -45,7 +46,7 @@ func apiRequest(url string) string {
 
 // Test ping function to make sure the API is running as expected
 func ping(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "pong"})
+	c.JSON(200, gin.H{"message": "pong+"})
 }
 
 func globalQuote(c *gin.Context) {
