@@ -14,5 +14,5 @@ func main() {
 	}
 
 	router := routes.SetupRouter()
-git	router.Run(":" + port) // listen and serve on 0.0.0.0:8080
+	router.Run(":" + port) // listen and serve on 0.0.0.0:8080
 }
