@@ -1,16 +1,15 @@
 package routes
 
 import (
+	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"strings"
-
-	"github.com/gin-gonic/gin"
 )
 
-var alpha_API = "https://www.alphavantage.co/"
+var alphaAPI = "https://www.alphavantage.co/"
 
 var apiKey = os.Getenv("API_KEY")
 
