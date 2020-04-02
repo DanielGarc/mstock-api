@@ -15,17 +15,19 @@ var alphaAPI = "https://www.alphavantage.co/"
 
 var apiKey = os.Getenv("API_KEY")
 
+// We need to make this a "generic" Object since sometimes it might get different parameters.
 type Symbol struct {
-	Name              string `json:"01. symbol"`
-	Open              string `json:"02. open"`
-	High              string `json:"03. high"`
-	Low               string `json:"04. low"`
-	Price             string `json:"05. price"`
-	Volume            string `json:"06. volume"`
-	LatestTradingDate string `json:"07. latest trading day"`
-	PreviousClose     string `json:"08. previous close"`
-	Change            string `json:"09. change"`
-	ChangePercent     string `json:"10. change percent"`
+	Name              string      `json:"01. symbol"`
+	Open              string      `json:"02. open"`
+	High              string      `json:"03. high"`
+	Low               string      `json:"04. low"`
+	Price             string      `json:"05. price"`
+	Volume            string      `json:"06. volume"`
+	LatestTradingDate string      `json:"07. latest trading day"`
+	PreviousClose     string      `json:"08. previous close"`
+	Change            string      `json:"09. change"`
+	ChangePercent     string      `json:"10. change percent"`
+	XData             interface{} `json:"-"`
 }
 
 // SetupRouter list all the api endpoints
