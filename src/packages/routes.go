@@ -1,17 +1,34 @@
 package routes
 
 import (
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 )
 
 var alphaAPI = "https://www.alphavantage.co/"
 
 var apiKey = os.Getenv("API_KEY")
+
+// We need to make this a "generic" Object since sometimes it might get different parameters.
+type Symbol struct {
+	Name              string      `json:"01. symbol"`
+	Open              string      `json:"02. open"`
+	High              string      `json:"03. high"`
+	Low               string      `json:"04. low"`
+	Price             string      `json:"05. price"`
+	Volume            string      `json:"06. volume"`
+	LatestTradingDate string      `json:"07. latest trading day"`
+	PreviousClose     string      `json:"08. previous close"`
+	Change            string      `json:"09. change"`
+	ChangePercent     string      `json:"10. change percent"`
+	XData             interface{} `json:"-"`
+}
 
 // SetupRouter list all the api endpoints
 func SetupRouter() *gin.Engine {
@@ -26,7 +43,19 @@ func SetupRouter() *gin.Engine {
 	return router
 }
 
-func apiRequest(url string) string {
+// To be able to know the structure of hte JSON we are trying to read
+// These type of "tools" should be added to a separate script or maybe to an option in the CLI
+func decryptUnknownJson(data []byte) {
+	var f interface{}
+
+	if err := json.Unmarshal([]byte(data), &f); err != nil {
+		log.Fatal(err)
+	}
+
+	log.Printf("%+v", f)
+}
+
+func apiRequest(url string) []byte {
 	client := &http.Client{}
 
 	request, err := http.NewRequest("GET", url, nil)
@@ -41,7 +70,9 @@ func apiRequest(url string) string {
 		log.Fatal(err)
 	}
 
-	return string(data[:])
+	//	decryptUnknownJson(data)
+
+	return data
 }
 
 // Test ping function to make sure the API is running as expected
@@ -55,7 +86,23 @@ func globalQuote(c *gin.Context) {
 
 	result := apiRequest(url)
 
-	c.JSON(200, gin.H{"message": result})
+	var s map[string]Symbol
+	if err := json.Unmarshal([]byte(result), &s); err != nil {
+		log.Fatal(err)
+	}
+	//log.Printf("%+v", s["Global Quote"])
+
+	symbol := s["Global Quote"]
+
+	//c.String(http.StatusOK, string(result))
+
+	open, _ := strconv.ParseFloat(symbol.Open, 64)
+	high, _ := strconv.ParseFloat(symbol.High, 64)
+	low, _ := strconv.ParseFloat(symbol.Low, 64)
+	price, _ := strconv.ParseFloat(symbol.Price, 64)
+	volume, _ := strconv.ParseInt(symbol.Volume, 10, 32)
+
+	c.JSON(http.StatusOK, gin.H{"Name": symbol.Name, "Open": open, "High": high, "Low": low, "Price": price, "Volume": volume})
 }
 
 func symbolSearch(c *gin.Context) {
@@ -64,5 +111,6 @@ func symbolSearch(c *gin.Context) {
 
 	result := apiRequest(url)
 
-	c.JSON(200, gin.H{"message": result})
+	//c.JSON(200, gin.H{"message": result})
+	c.String(http.StatusOK, string(result))
 }
