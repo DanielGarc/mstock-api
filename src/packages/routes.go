@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 )
 
@@ -18,13 +17,13 @@ var apiKey = os.Getenv("API_KEY")
 // We need to make this a "generic" Object since sometimes it might get different parameters.
 type Symbol struct {
 	Name              string      `json:"01. symbol"`
-	Open              string      `json:"02. open"`
-	High              string      `json:"03. high"`
-	Low               string      `json:"04. low"`
-	Price             string      `json:"05. price"`
-	Volume            string      `json:"06. volume"`
+	Open              float64     `json:"02. open,string"`
+	High              float64     `json:"03. high,string"`
+	Low               float64     `json:"04. low,string"`
+	Price             float64     `json:"05. price,string"`
+	Volume            int32       `json:"06. volume,string"`
 	LatestTradingDate string      `json:"07. latest trading day"`
-	PreviousClose     string      `json:"08. previous close"`
+	PreviousClose     float64     `json:"08. previous close,string"`
 	Change            string      `json:"09. change"`
 	ChangePercent     string      `json:"10. change percent"`
 	XData             interface{} `json:"-"`
@@ -96,13 +95,7 @@ func globalQuote(c *gin.Context) {
 
 	//c.String(http.StatusOK, string(result))
 
-	open, _ := strconv.ParseFloat(symbol.Open, 64)
-	high, _ := strconv.ParseFloat(symbol.High, 64)
-	low, _ := strconv.ParseFloat(symbol.Low, 64)
-	price, _ := strconv.ParseFloat(symbol.Price, 64)
-	volume, _ := strconv.ParseInt(symbol.Volume, 10, 32)
-
-	c.JSON(http.StatusOK, gin.H{"Name": symbol.Name, "Open": open, "High": high, "Low": low, "Price": price, "Volume": volume})
+	c.JSON(http.StatusOK, gin.H{"Name": symbol.Name, "Open": symbol.Open, "High": symbol.High, "Low": symbol.Low, "Price": symbol.Price, "Volume": symbol.Volume})
 }
 
 func symbolSearch(c *gin.Context) {
