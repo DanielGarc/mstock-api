@@ -1,4 +1,4 @@
-module mstock-api/packages
+module mstock-api/routes
 
 go 1.14
 

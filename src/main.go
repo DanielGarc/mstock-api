@@ -1,7 +1,7 @@
 package main
 
 import (
-	"mstock-api/packages"
+	"mstock-api/routes"
 	"os"
 )
 
