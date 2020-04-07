@@ -6,13 +6,8 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 )
-
-var alphaAPI = "https://www.alphavantage.co/"
-
-var apiKey = os.Getenv("API_KEY")
 
 // SetupRouter list all the api endpoints
 func SetupRouter() *gin.Engine {
@@ -20,14 +15,14 @@ func SetupRouter() *gin.Engine {
 
 	router.GET("/ping", ping)
 
-	router.GET("/global_quote", globalQuote)
+	router.GET("/global_quote", globalQuoteEndpoint)
 
-	router.GET("/symbol_search", symbolSearch)
+	router.GET("/symbol_search", symbolSearchEndpoint)
 
 	return router
 }
 
-// To be able to know the structure of hte JSON we are trying to read
+// To be able to know the structure of the JSON we are trying to read
 // These type of "tools" should be added to a separate script or maybe to an option in the CLI
 func decryptUnknownJson(data []byte) {
 	var f interface{}
@@ -64,31 +59,49 @@ func ping(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "pong+"})
 }
 
-func globalQuote(c *gin.Context) {
+func globalQuoteEndpoint(c *gin.Context) {
 	//	https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=demo
-	url := strings.Join([]string{alphaAPI, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", apiKey}, "")
+	url := strings.Join([]string{AlphaAPI, "query?function=GLOBAL_QUOTE&symbol=", c.Query("symbol"), "&apikey=", ApiKey}, "")
 
+	quote := globalQuote(url)
+
+	//c.String(http.StatusOK, string(result))
+	c.JSON(http.StatusOK, gin.H{"Symbol": quote.Symbol, "Open": quote.Open, "High": quote.High, "Low": quote.Low, "Price": quote.Price, "Volume": quote.Volume})
+}
+
+func globalQuote(url string) GlobalQuote {
 	result := apiRequest(url)
 
-	var s map[string]Symbol
+	var s map[string]GlobalQuote
 	if err := json.Unmarshal([]byte(result), &s); err != nil {
 		log.Fatal(err)
 	}
 	//log.Printf("%+v", s["Global Quote"])
 
-	symbol := s["Global Quote"]
+	quote := s["Global Quote"]
 
-	//c.String(http.StatusOK, string(result))
-
-	c.JSON(http.StatusOK, gin.H{"Name": symbol.Name, "Open": symbol.Open, "High": symbol.High, "Low": symbol.Low, "Price": symbol.Price, "Volume": symbol.Volume})
+	return quote
 }
 
-func symbolSearch(c *gin.Context) {
+func symbolSearchEndpoint(c *gin.Context) {
 	// https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=BA&apikey=demo
-	url := strings.Join([]string{alphaAPI, "query?function=SYMBOL_SEARCH&keywords=", c.Query("keywords"), "&apikey=", apiKey}, "")
+	url := strings.Join([]string{AlphaAPI, "query?function=SYMBOL_SEARCH&keywords=", c.Query("keywords"), "&apikey=", ApiKey}, "")
 
+	matches := symbolSearch(url)
+
+	c.JSON(200, gin.H{"bestMatches": matches})
+}
+
+func symbolSearch(url string) []SymbolSearch {
 	result := apiRequest(url)
 
-	//c.JSON(200, gin.H{"message": result})
-	c.String(http.StatusOK, string(result))
+	var s map[string][]SymbolSearch
+	if err := json.Unmarshal([]byte(result), &s); err != nil {
+		log.Fatal(err)
+	}
+	//log.Printf("%+v", s["bestMatches"])
+
+	matches := s["bestMatches"]
+
+	return matches
 }
