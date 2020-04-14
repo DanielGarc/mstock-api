@@ -12,10 +12,15 @@ import (
 
 func main() {
 
-	//Load env file
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	//Load env file for local use
+
+	if os.Getenv("MODE") == "dev" {
+
+		err := godotenv.Load()
+
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 
 	port := os.Getenv("PORT")
