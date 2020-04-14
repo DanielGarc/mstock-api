@@ -1,16 +1,16 @@
 # Use the official Golang image to create a build artifact.
 # This is based on Debian and sets the GOPATH to /go.
 # https://hub.docker.com/_/golang
-FROM golang:1.13 as builder
+FROM golang:1.14.1 as builder
 
 # Create and change to the app directory.
 WORKDIR /app
 
 # Retrieve application dependencies.
 # This allows the container build to reuse cached dependencie
-COPY /src/go.* ./
-COPY /src/packages/go.* ./
-RUN go mod download
+#COPY /src/go.* ./
+COPY src ./
+RUN go get
 
 # Copy local code to the container image.
 COPY . ./

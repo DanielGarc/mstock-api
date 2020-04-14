@@ -6,10 +6,6 @@ First of all, you need to have go installed. If you need help with this, you can
 
 ## Running the server
 
-Export your API key:
-
-`export API_KEY={your_api_key}`
-
 Build the executable:
 
 `go build main.go`
@@ -29,3 +25,7 @@ Run:
 Install [docker](https://docs.docker.com/install/) and run
 
 PORT=8080 docker build --tag mstock .
+
+## To build and a deploy a new container without having to trigger a new build
+
+`gcloud builds submit . --config ./ci/cloudbuild.yaml --substitutions=COMMIT_SHA="[something here]"`

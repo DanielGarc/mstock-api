@@ -2,11 +2,12 @@ package routes
 
 import (
 	"encoding/json"
-	"github.com/gin-gonic/gin"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 // SetupRouter list all the api endpoints
@@ -56,7 +57,7 @@ func apiRequest(url string) []byte {
 
 // Test ping function to make sure the API is running as expected
 func ping(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "pong+"})
+	c.JSON(200, gin.H{"message": "pong++"})
 }
 
 func globalQuoteEndpoint(c *gin.Context) {

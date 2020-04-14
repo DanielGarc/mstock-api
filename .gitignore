@@ -1,2 +1,4 @@
 *.un~
 main
+src/cloud_sql_proxy
+src/.env
