@@ -24,8 +24,8 @@ type Peak struct {
 }
 
 func New(code string) Symbol {
-	quote := GetFromGlobalQuote(code)
-	match := GetFromSymbolSearch(code)
+	quote := getSymbolNumbers(code)
+	match := getSymbolInfo(code)
 
 	todaysHigh := Peak{quote.High, time.Now(), true}
 	todaysLow := Peak{quote.Low, time.Now(), false}
@@ -35,7 +35,7 @@ func New(code string) Symbol {
 	return s
 }
 
-func GetFromGlobalQuote(code string) GlobalQuote {
+var getSymbolNumbers = func(code string) GlobalQuote {
 	//	https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=MSFT&apikey=demo
 	url := strings.Join([]string{AlphaAPI, "query?function=GLOBAL_QUOTE&symbol=", code, "&apikey=", ApiKey}, "")
 
@@ -44,7 +44,7 @@ func GetFromGlobalQuote(code string) GlobalQuote {
 	return quote
 }
 
-func GetFromSymbolSearch(code string) SymbolSearch {
+var getSymbolInfo = func(code string) SymbolSearch {
 	// https://www.alphavantage.co/query?function=SYMBOL_SEARCH&keywords=BA&apikey=demo
 	url := strings.Join([]string{AlphaAPI, "query?function=SYMBOL_SEARCH&keywords=", code, "&apikey=", ApiKey}, "")
 
